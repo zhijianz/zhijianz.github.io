@@ -74,7 +74,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="code,java,虚拟机," />
 
 
 
@@ -90,12 +90,17 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="zhijianz">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="概述Java技术体系由下面的几个部分组成：  Java程序设计语言 Java虚拟机 Java API 第三方开源或商用API class 文件格式  其中，可以向前三者通称为JDK(Java Development Kit) 自动内存管理机制内存模型JVM根据Java程序语言的特点和程序运行时需求将其内存构建成如下的模型：  程序计数器（线程私有） 虚拟机栈（线程私有） 本地方法栈（线程私有） 堆">
+<meta name="keywords" content="code,java,虚拟机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM 基础理论">
+<meta property="og:url" content="http://yoursite.com/2017/05/04/JVM-基础理论/index.html">
 <meta property="og:site_name" content="zhijianz">
+<meta property="og:description" content="概述Java技术体系由下面的几个部分组成：  Java程序设计语言 Java虚拟机 Java API 第三方开源或商用API class 文件格式  其中，可以向前三者通称为JDK(Java Development Kit) 自动内存管理机制内存模型JVM根据Java程序语言的特点和程序运行时需求将其内存构建成如下的模型：  程序计数器（线程私有） 虚拟机栈（线程私有） 本地方法栈（线程私有） 堆">
+<meta property="og:updated_time" content="2017-05-04T04:49:27.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zhijianz">
+<meta name="twitter:title" content="JVM 基础理论">
+<meta name="twitter:description" content="概述Java技术体系由下面的几个部分组成：  Java程序设计语言 Java虚拟机 Java API 第三方开源或商用API class 文件格式  其中，可以向前三者通称为JDK(Java Development Kit) 自动内存管理机制内存模型JVM根据Java程序语言的特点和程序运行时需求将其内存构建成如下的模型：  程序计数器（线程私有） 虚拟机栈（线程私有） 本地方法栈（线程私有） 堆">
 
 
 
@@ -123,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/05/04/JVM-基础理论/"/>
 
 
 
 
 
-  <title>zhijianz</title>
+  <title>JVM 基础理论 | zhijianz</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -154,9 +159,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -239,9 +242,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -271,10 +274,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2017/05/04/JVM-基础理论/" itemprop="url">
-                  JVM 基础理论
-                </a>
+                JVM 基础理论
               
             
           </h1>
@@ -324,9 +324,7 @@
       
 
       
-        
-          
-            <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>Java技术体系由下面的几个部分组成：</p>
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>Java技术体系由下面的几个部分组成：</p>
 <ul>
 <li>Java程序设计语言</li>
 <li>Java虚拟机</li>
@@ -377,309 +375,76 @@
 <p>在介绍整个回收流程的时候可以看到每次触发Minor GC的时候都会伴随着Major GC的检查过程。这个是因为Minor GC只是用一块survivor保存清除之后存活的对象在一些特殊情况下可能是不够的，当这种情况发生的时候就需要用到老年代的内存进行一次担保保证这个GC可以正常的完成。</p>
 <p>前面有说到，新创建的对象默认的情况下应该是直接分配在年轻代中，只有当这些对象达到一定的条件之后才会进入到老年代的内存中。对于新创建的对象，只要大于当前虚拟机设定的大对象的值之后，该对象就会直接被分配到老年代的内存中。此外，年轻代中对象会有一个标识其年龄的值，每当该对象经历一次GC并且成功存活之后年龄就会自动增加，直到其达到我们设定的年龄阈值之后就会配移动到老年代中。但是这种年龄判断的机制并不是只有这种情况，如果年轻代中达到某个年龄的对象占用了一半以上的内存，那么大于等于该年龄值的对象也一样会被移动到老年代中。</p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/03/Android内存分析（1）-MAT/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zhijianz">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.svg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="zhijianz">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/03/Android内存分析（1）-MAT/" itemprop="url">
-                  Android内存分析（1）- MAT.md
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-03T09:46:48+08:00">
-                2017-05-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/code/" rel="tag"># code</a>
           
-            
+            <a href="/tags/java/" rel="tag"># java</a>
           
-
+            <a href="/tags/虚拟机/" rel="tag"># 虚拟机</a>
           
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
         
-          
-            <h1 id="缘由"><a href="#缘由" class="headerlink" title="缘由"></a>缘由</h1><p>应用开发的过程中，需要去重点关心应用内存使用情况的情形基本上都是运行的过程中出现了OOM。而出现OOM通常的原因是代码写出问题导致的内存泄漏，另外一种就是应用在某个时间段集中请求大量的内存导致在一些老旧的机器上出现应用内存不足OOM的情况。最近在项目的开发过程中，就是遇到了后面的这种情况。下面的内容主要是用来记录在解决这个问题的过程中学习到的一些内容。</p>
-<h1 id="MAT"><a href="#MAT" class="headerlink" title="MAT"></a>MAT</h1><p><code>Mat</code>将堆转存文件的信息分析完之后，提供给开发者其中每个对象内存占用情况以及相关的引用情况作为内存分析的依据。在使用<code>Mat</code>进行内存分析之前需要了解其相关的几个基本概念:</p>
-<h3 id="Shallow-Heap"><a href="#Shallow-Heap" class="headerlink" title="Shallow Heap"></a>Shallow Heap</h3><p><code>Shallow Heap</code>指代的是java对象自身分配堆的内存大小，不包括其引用的相关对象占用的内容大小，这些引用在计算的时候都只会按照引用占用内存的32bit或64bit计算</p>
-<h3 id="Retained-Heap"><a href="#Retained-Heap" class="headerlink" title="Retained Heap"></a>Retained Heap</h3><p>每个对象除了自身引用存储时占用着内存之外，通过保持这些引用导致对象无法被回收同样会占用一部分内容，<code>Retained Heap</code>指的是该对象被回收之后，可以从堆上释放内存的总量</p>
-<h3 id="Dominator-Tree"><a href="#Dominator-Tree" class="headerlink" title="Dominator Tree"></a>Dominator Tree</h3><blockquote>
-<p>假如从GC Root 到达obj-b的所有访问路径都必然经过obj-a，这种情况称为obj-a dominate obj-b，同时，obj-a 为 obj-b的dominator</p>
-</blockquote>
-<p><code>Mat</code>提供的<code>Dominator-Tree</code>视图列举了当前hprof文件中所有的大对象以及这些大对象所控制的对象列表</p>
-<h3 id="Histogram"><a href="#Histogram" class="headerlink" title="Histogram"></a>Histogram</h3><p><code>Mat</code>提供的<code>Histogram</code>视图列举了hprof文件中所有的对象，在这个视图中我们可以通过查询操作找到我们感兴趣的对象，进而查询相关的引用。</p>
-<h3 id="List-Object"><a href="#List-Object" class="headerlink" title="List Object"></a>List Object</h3><p>当我们对<code>Mat</code>上述两种视图提供的对象列表中某个对象产生怀疑并且希望查看其对应的引用情况的时候，右键点击该对象可以看到一个<code>list object</code>的选项，其中有<code>with outgoing references</code>/<code>with incoming references</code>两种子选项。<code>with outgoing references</code>的功能是列举出所有被当前对象所引用到的对象，<code>with incoming references</code>与之相反，列举出所有引用当前对象的对象。这两种选择根据当前分析的目的和方向适当选用。</p>
-<h3 id="Path-to-GC-Roots"><a href="#Path-to-GC-Roots" class="headerlink" title="Path to GC Roots"></a>Path to GC Roots</h3><p><code>Path to GC Roots</code>可以显示出当前对象到<code>GC Roots</code>的引用可达路径，通过这个路径可以清楚的看出来应用中的那些对象直接或间接地引用到这个对象，如果这种引用不是必要的可以通过将这些非必要引用去除来回收这部分的内存空间。</p>
-<h2 id="分析的方法"><a href="#分析的方法" class="headerlink" title="分析的方法"></a>分析的方法</h2><p>对于内存泄漏的情况，通常使用<code>leak canary</code>之类的工具会更加方便，如果要使用<code>Mat</code>进行泄漏的分析通常也会有一个分析的目标对象。如果目标对象是一个activity，那么最明显的特征就是在<code>Histogram</code>中这个activity会存在多个实例；如果没有这种情况出现，对于所有的目标对象都可以分析谁持有了该对象并找到其中不合理的地方。</p>
-<p>而对于程序大内存问题的分析，则需要用<code>Dominator Tree</code>视图去找到这些大内存对象以及他们到<code>GC Roots</code>的可达路径，通过这些可达路径去分析那些引用是不需要可以优化的内容</p>
-<h1 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h1><ul>
-<li><a href="http://help.eclipse.org/luna/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fconcepts%2Fdominatortree.html&amp;cp=39_2_2" target="_blank" rel="external">MAT 文档对于相关概念的解析</a></li>
-<li><a href="http://www.lightskystreet.com/2015/09/01/mat_usage/" target="_blank" rel="external">一份比较详细的MAT使用教程</a></li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
       
 
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/01/ADB常用命令/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zhijianz">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.svg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="zhijianz">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/05/03/Android内存分析（1）-MAT/" rel="next" title="Android内存分析（1）- MAT.md">
+                <i class="fa fa-chevron-left"></i> Android内存分析（1）- MAT.md
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/2017/05/01/ADB常用命令/" itemprop="url">
-                  ADB常用命令
-                </a>
-              
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-01T00:50:20+08:00">
-                2017-05-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <ul>
-<li>显示所有已安装应用程序</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ adb shell pm list packages</div></pre></td></tr></table></figure>
-<ul>
-<li>卸载某个已安装的应用程序</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ adb uninstall &lt;package_name&gt;</div></pre></td></tr></table></figure>
-<ul>
-<li>设置应用模式启动时等待调试链接，代替debug模式启动。用完之后需要调用第二条命令清除该设置，否则将会一直生效。</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ adb shell am <span class="built_in">set</span>-debug-app -w --persistent &lt;package_name&gt;</div><div class="line">$ adb shell am clear-debug-app &lt;package_name&gt;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -687,6 +452,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -706,8 +475,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.svg"
@@ -760,6 +538,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自动内存管理机制"><span class="nav-number">2.</span> <span class="nav-text">自动内存管理机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存模型"><span class="nav-number">2.1.</span> <span class="nav-text">内存模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾回收方法论"><span class="nav-number">3.</span> <span class="nav-text">垃圾回收方法论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象已死？"><span class="nav-number">3.1.</span> <span class="nav-text">对象已死？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何回收"><span class="nav-number">3.2.</span> <span class="nav-text">如何回收</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -873,6 +667,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
 
   
 
