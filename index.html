@@ -250,6 +250,237 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/11/ANR分析-trace文件分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhijianz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.svg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhijianz">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/07/11/ANR分析-trace文件分析/" itemprop="url">
+                  ANR分析-trace文件分析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-11T13:16:14+08:00">
+                2017-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>ANR是Application Not Responding，表述的是应用程序主线程在限定时间内没有对特定事件进行响应。现有的ANR有三种不同的类别</p>
+<pre><code>1. keyDispatchTimeout 主线程5s没有响应按键输入或屏幕触摸事件
+2. BroadcastReceiverTimeout onReceiver函数10s没有完成操作
+3. ServiceTimeout service生命周期函数20s没有完成操作。
+</code></pre><h3 id="keyDispatchTimeout"><a href="#keyDispatchTimeout" class="headerlink" title="keyDispatchTimeout"></a>keyDispatchTimeout</h3><p>当应用程序的window处于活动状态时，可以从系统底层收到用用户的触摸输入事件。事件由运行于系统进程的InputDispatcher(一个独立线程)抛给上层的应用程序，上层应用程序主线程通过InputChannel接受输入事件并进行处理。在应用程序处理事件的过程中，InputDispatcher会不断检查事件处理是否有发生超时，当发生超时就会触发keyDispatchTimeout的ANR相关逻辑。</p>
+<h3 id="BroadcastReceiverTimeout"><a href="#BroadcastReceiverTimeout" class="headerlink" title="BroadcastReceiverTimeout"></a>BroadcastReceiverTimeout</h3><p>BroadcastReceiver的onReceive函数运行在主线程中，如果该函数在10s内没有返回就会出现ANR，不过这种状况下的anr不会出现弹窗，只会输出log。</p>
+<h3 id="ServiceTimeout"><a href="#ServiceTimeout" class="headerlink" title="ServiceTimeout"></a>ServiceTimeout</h3><p>service的生命周期函数同样会在主线程执行，这些生命周期函数20s内没有返回执行结果会触发ANR，这种情况anr同样不会出现弹窗只会输出日志。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>通过上面的描述可以基本的总结ANR产生的原因：</p>
+<ol>
+<li>ANR只会出现在程序的主线程</li>
+<li>在特定时间内没有完成事件处理触发超时，超时的时限依据不同的时间会有不同的规定</li>
+<li>发生特定的事件（触摸输入事件，BroadcastReceiver的onReceive函数，Service生命周期函数）</li>
+</ol>
+<h1 id="trace文件分析"><a href="#trace文件分析" class="headerlink" title="trace文件分析"></a>trace文件分析</h1><p>anr问题分析可以依赖两个内容，一个是bugreport提供的全面日志；另外一个是系统提供的trace文件，系统在发生anr的时候会将当前运行进程的调用栈信息输出到trace文件中，通常发生anr的进程会第一个被输出，trace文件保存在<code>/data/anr/</code>目录下面，如果是比较明显的anr问题可以直接通过这个调用栈和cpu使用率分析出原因并解决。</p>
+<h2 id="cpu分析"><a href="#cpu分析" class="headerlink" title="cpu分析"></a>cpu分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">E/ActivityManager( 127): ANR in com.example.anrdemo (com.example.anrdemo/.ANRActivity)</div><div class="line">E/ActivityManager( 127): Reason: keyDispatchingTimedOut</div><div class="line">E/ActivityManager( 127): Load: 3.85 / 3.41 / 3.16 //1.CPU平均负载</div><div class="line"> </div><div class="line">//2.ANR发生之前的一段时间内的CPU使用率</div><div class="line">E/ActivityManager( 127): CPU usage from 26835ms to 3662ms ago with 99% awake:</div><div class="line">E/ActivityManager( 127): 9.4% 98/mediaserver: 9.4% user + 0% kernel</div><div class="line">E/ActivityManager( 127): 8.9% 127/system_server: 6.9% user + 2% kernel / faults: 1823 minor //3. minor或者major的页错误次数</div><div class="line">... ...</div><div class="line">E/ActivityManager( 127):+0% 5033/com.example.anrdemo: 0% user + 0% kernel // 4.新增和移除线程</div><div class="line">E/ActivityManager( 127): 39% TOTAL: 32% user + 6.1% kernel</div><div class="line"> </div><div class="line">//5.ANR发生之后的一段时间内的CPU使用率</div><div class="line">E/ActivityManager( 127): CPU usage from 601ms to 1132ms later with 99% awake:</div><div class="line">E/ActivityManager( 127): 10% 127/system_server: 1.7% user + 8.9% kernel / faults: 5 minor</div><div class="line">E/ActivityManager( 127): 10% 163/InputDispatcher: 1.7% user + 8.9% kernel</div><div class="line">E/ActivityManager( 127): 1.7% 127/system_server: 1.7% user + 0% kernel</div><div class="line">E/ActivityManager( 127): 1.7% 135/SurfaceFlinger: 0% user + 1.7% kernel</div><div class="line">E/ActivityManager( 127): 1.7% 2814/Binder Thread #: 1.7% user + 0% kernel</div><div class="line">... ...</div><div class="line">E/ActivityManager( 127): 37% TOTAL: 27% user + 9.2% kernel</div></pre></td></tr></table></figure>
+<p>上面是一份比较简单的cpu使用率的日志，通过这份日志来了解cpu使用率日志中的一些关键内容。</p>
+<ol>
+<li>cpu负载</li>
+</ol>
+<p>日志中显示出来的是系统1/5/15分钟的cpu负载。cpu负载这个概念经常出现在服务器开发中，表示的是某个时刻正在使用cpu进程的数量以及等待队列中进程数量的和。平均负载的计算方式是从系统启动开始，每隔一个时间点就会记录一次cpu的负载，在需要数据的时候就去计算对应时间范围内的cpu负载平均值。考虑到Android嵌入式设备的特殊性，通常1分钟cpu平均负载会显得更加有参考价值。</p>
+<ol>
+<li>page fault</li>
+</ol>
+<p>任务需要获取数据的时候，首先会尝试从cpu的缓存中读取，如果数据不在缓存中就尝试从内存中访问，如果这个时候还是无法得到数据就需要从磁盘中加载数据再访问。在上面的数据访问流程中，每当需要从磁盘中加载数据进入内存在进行访问的时候就会触发一次<code>Major Page Fault</code>，无法从cpu缓存中读取到数据然后从内存中加载的时候会触发一次<code>Minor Page Fault</code>。当进程进行大量IO任务从磁盘中读取文件的时候，日志中会就会出现大量的<code>Major Page Fault</code>。</p>
+<ol>
+<li>cpu使用率</li>
+</ol>
+<p>user: CPU在用户态的运行时间，不包括nice值为负数的进程运行的时间<br>nice: CPU在用户态并且nice值为负数的进程运行的时间。nice表示线程调度的优先级，从-19到20，nice值越小优先级越高。<br>system: CPU在内核态运行的时间<br>idle: CPU空闲时间，不包括iowait时间<br>iowait: CPU等待I/O操作的时间<br>irq: CPU硬中断的时间<br>softirq: CPU软中断的时间</p>
+<ol>
+<li>进程创建状态</li>
+</ol>
+<p>如果一个进程或线程的CPU使用率前有“+”，说明该进程或线程是在最后两次CPU使用率采样时间段内新建的；反之如果是“-”，说明该进程或线程在采样时间段内终止了；如果是空，说明该进程或线程是在倒数第二次采样时间点之前已经存在。</p>
+<h2 id="堆栈分析"><a href="#堆栈分析" class="headerlink" title="堆栈分析"></a>堆栈分析</h2><p>系统在输出trace文件的时候会将之前的文件给覆盖掉，所以通常我们只能获得最近一次anr发生时候的日志。当然，这些并不是一定就只能这个样子，在Android2.2之后增加的DropBox提供了查看trace历史文件的可能，但是需要root。</p>
+<p>trace文件在应用程序发生anr的时候输出，输出的内容是系统当前运行的所有进程的相关信息，通常发生anr的进程会第一个被输出。输出的进程信息中，会详细输入每个线程的基本属性信息，运行状态以及调用栈，我们也是通过这些信息来分析anr形成的原因。</p>
+<p>trace文件中有一些名词需要解释一下：</p>
+<ul>
+<li>pid: 进程id</li>
+<li>cmd line: 进程名字</li>
+<li>tid: 线程创建序号</li>
+<li>sysTid: 线程id，主线程id和进程id一致</li>
+</ul>
+<p>在trace文件中比较重要的一点是线程运行状态信息。Android分别提供了Thread.java和Thread.cpp两套线程状态描述，前者更加概括和容易理解，后者面向虚拟机则更加的细致一些。</p>
+<table>
+<thead>
+<tr>
+<th>Thread.java</th>
+<th>Thread.cpp</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TERMINATED</td>
+<td>ZOMBIE</td>
+<td>线程死亡，终止运行</td>
+</tr>
+<tr>
+<td>RUNNABLE</td>
+<td>RUNNING/RUNNABLE</td>
+<td>线程可运行或正在运行</td>
+</tr>
+<tr>
+<td>TIMED_WAITING</td>
+<td>TIMED_WAIT</td>
+<td>执行了带超时参数的wait,sleep,join</td>
+</tr>
+<tr>
+<td>BLOCKED</td>
+<td>MONITOR</td>
+<td>线程阻塞，等待获取对象锁</td>
+</tr>
+<tr>
+<td>WAITING</td>
+<td>WAIT</td>
+<td>执行了不带超时参数的wait</td>
+</tr>
+<tr>
+<td>NEW</td>
+<td>INITIALIZING</td>
+<td>新建，正在初始化，为其分配资源</td>
+</tr>
+<tr>
+<td>NEW</td>
+<td>STARTING</td>
+<td>新建，正在启动</td>
+</tr>
+<tr>
+<td>RUNNABLE</td>
+<td>NATIVE</td>
+<td>正在执行JNI本地函数</td>
+</tr>
+<tr>
+<td>WAITING</td>
+<td>VMWAIT</td>
+<td>正在等待VM资源</td>
+</tr>
+<tr>
+<td>RUNNABLE</td>
+<td>SUSPENDED</td>
+<td>线程暂停，通常是由于GC或debug被暂定</td>
+</tr>
+<tr>
+<td></td>
+<td>UNKNOWN</td>
+<td>未知状态</td>
+</tr>
+</tbody>
+</table>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://rayleeya.iteye.com/blog/1955657" target="_blank" rel="external">Android 系统稳定性 - ANR（二) 注：整个系列都可以看一下</a></li>
+<li><a href="http://www.cnblogs.com/purediy/p/3225060.html" target="_blank" rel="external">anr的基本介绍</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/26/常见内存泄漏/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1336,7 +1567,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1349,7 +1580,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
