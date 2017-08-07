@@ -74,7 +74,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android,code,ADB," />
+  <meta name="keywords" content="code,Android,ADB," />
 
 
 
@@ -91,13 +91,13 @@
 
 
 <meta name="description" content="显示所有已安装应用程序  1$ adb shell pm list packages  卸载某个已安装的应用程序  1$ adb uninstall &amp;lt;package_name&amp;gt;  设置应用模式启动时等待调试链接，代替debug模式启动。用完之后需要调用第二条命令清除该设置，否则将会一直生效。  12$ adb shell am set-debug-app -w --persiste">
-<meta name="keywords" content="Android,code,ADB">
+<meta name="keywords" content="code,Android,ADB">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ADB常用命令">
 <meta property="og:url" content="http://yoursite.com/2017/05/01/ADB常用命令/index.html">
 <meta property="og:site_name" content="zhijianz">
 <meta property="og:description" content="显示所有已安装应用程序  1$ adb shell pm list packages  卸载某个已安装的应用程序  1$ adb uninstall &amp;lt;package_name&amp;gt;  设置应用模式启动时等待调试链接，代替debug模式启动。用完之后需要调用第二条命令清除该设置，否则将会一直生效。  12$ adb shell am set-debug-app -w --persiste">
-<meta property="og:updated_time" content="2017-05-01T16:16:01.000Z">
+<meta property="og:updated_time" content="2017-08-07T09:40:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ADB常用命令">
 <meta name="twitter:description" content="显示所有已安装应用程序  1$ adb shell pm list packages  卸载某个已安装的应用程序  1$ adb uninstall &amp;lt;package_name&amp;gt;  设置应用模式启动时等待调试链接，代替debug模式启动。用完之后需要调用第二条命令清除该设置，否则将会一直生效。  12$ adb shell am set-debug-app -w --persiste">
@@ -336,7 +336,10 @@
 <li>设置应用模式启动时等待调试链接，代替debug模式启动。用完之后需要调用第二条命令清除该设置，否则将会一直生效。</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ adb shell am <span class="built_in">set</span>-debug-app -w --persistent &lt;package_name&gt;</div><div class="line">$ adb shell am clear-debug-app &lt;package_name&gt;</div></pre></td></tr></table></figure>
-
+<ul>
+<li>删除应用缓存、sharedpreference之类的</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ adb shell pm clear &lt;packagename&gt;</div></pre></td></tr></table></figure>
       
     </div>
 
@@ -365,9 +368,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Android/" rel="tag"># Android</a>
-          
             <a href="/tags/code/" rel="tag"># code</a>
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
           
             <a href="/tags/ADB/" rel="tag"># ADB</a>
           

@@ -1488,7 +1488,10 @@
 <li>设置应用模式启动时等待调试链接，代替debug模式启动。用完之后需要调用第二条命令清除该设置，否则将会一直生效。</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ adb shell am <span class="built_in">set</span>-debug-app -w --persistent &lt;package_name&gt;</div><div class="line">$ adb shell am clear-debug-app &lt;package_name&gt;</div></pre></td></tr></table></figure>
-
+<ul>
+<li>删除应用缓存、sharedpreference之类的</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ adb shell pm clear &lt;packagename&gt;</div></pre></td></tr></table></figure>
           
         
       
