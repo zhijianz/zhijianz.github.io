@@ -1492,6 +1492,11 @@
 <li>删除应用缓存、sharedpreference之类的</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ adb shell pm clear &lt;packagename&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>查看日志</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ adb <span class="_">-s</span> series-number logcat | grep --color=auto -i <span class="string">"keyword"</span></div></pre></td></tr></table></figure>
+
           
         
       
